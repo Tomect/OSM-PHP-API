@@ -496,3 +496,137 @@ class OSMCacheType
 	}
 }
 ?>
+
+<?php
+// OSM Cron Jobs
+//TODO split into another file
+
+class CronFrequency
+{
+	/*
+	 * NOTE :- Adding items to this list does not add it to the running
+	 *         This list serves to make the program readable
+	 */
+	const Never = 0;
+	const Daily = 1;
+	const Weekly = 2;
+	const BiWeekly = 3;
+	const Monthly = 4;
+	const BiMonthly = 5;
+	const BiAnnually = 6;
+	const Annually = 7;
+	const StartTerm = 8;
+	const EndTerm = 9;
+	const StartHalfTerm = 10;
+	const EndHalfTerm = 11;
+}
+
+/*
+ * This function checks which cron jobs are due to be run
+ * To ensure that all the cron functions run correctly, this
+ * should be schedualed to run daily
+ */
+function cron()
+{
+	$CronTimes = GetCronTimes();
+	
+}
+
+/*
+ * This function updates the next time that the cron jobs
+ * will execute the functions
+ */
+function UpdateNextCron()
+{
+	$CronTimes = GetCronTimes();
+	
+	foreach($CronTimes as $cronTime)
+	{
+		$Frequency = $x;
+		if($cronTime < date())
+		{
+			switch ($Frequency)
+			{
+				case CronFrequency::Never:
+					break;
+				case CronFrequency::Daily:
+					break;
+				case CronFrequency::Weekly:
+					break;
+				case CronFrequency::BiWeekly:
+					break;
+				case CronFrequency::Monthly:
+					break;
+				case CronFrequency::BiMonthly :
+					break;
+				case CronFrequency::BiAnnually:
+					break;
+				case CronFrequency::Annually :
+					break;
+				case CronFrequency::StartTerm:
+					break;
+				case CronFrequency::EndTerm:
+					break;
+				case CronFrequency::StartHalfTerm:
+					break;
+				case CronFrequency::EndHalfTerm:
+					break;
+				case default:
+					Logger("Cron Frequency $Frequency does not exist", LogTypes::Error);
+					break;
+			}
+			DB_UpdateNextCron($Frequency, $Date);
+		}
+	}
+}
+
+function SendEventReminders()
+{
+	
+}
+
+function SendPaymentReminders()
+{
+	
+}
+
+function SendLeaderUpdates()
+{
+	
+}
+
+function GenerateLeaderUpdate($LeaderID)
+{
+	
+}
+
+function SendParentUpdates()
+{
+	
+}
+
+function GenerateParentUpdate($ParentID)
+{
+	
+}
+
+function UpdateGlobalCache()
+{
+	
+}
+
+function GetCronTimes()
+{
+	
+}
+
+/*
+ * This function updates the frequency that cron items
+ * are run
+ */
+function UpdateCronTimes()
+{
+	
+}
+
+?>
