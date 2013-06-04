@@ -1,0 +1,2 @@
+000 - Function not implemented
+001 - Connection to OSM Failed
