@@ -14,7 +14,7 @@ if($_POST['Install'] == "TRUE")
 	<?php
 	/*
 	 * This file is the OSM configuration 
-	 * Do not add aditional items to this file as it is re-written by the installation 
+	 * Do not add aditional items to this file as it is re-written by the installation/update
 	 */
 	$OSM_Login_File = "'.$OSM_Login_File.'";
 	$OSM_Cache_Prefix = "'.$OSM_Cache_Prefix.'";
@@ -22,6 +22,12 @@ if($_POST['Install'] == "TRUE")
 	$OSM_API_ID = "'.$OSM_API_ID.'";
 	$OSM_Token = "'.$OSM_Token.'";
 	
+	
+	/*
+	 * These variables relate to security within the system
+	 */
+	$SSH_Enabled = "'.$SSH_Enabled.'";
+	$ResponseCodeKey = "'.$ResponseCodeKey.'";
 	
 	/*
 	 * These relate to the DB structure
@@ -64,9 +70,27 @@ if($_POST['Install'] == "TRUE")
 		<h2>Server Config</h2>
 		<p>This section shows the server configuration that must be completed.  If there are any red crosses, the system will not install.</p>
 		
+		<h2>Security Configuration</h2>
+		<p>
+		The OSM API allows access to the Scout Details, security is very important. 		
+		</p>
+		<p>SSH - If your server does not have SSH you should not enable this. Enabling this option will allow for personal information to be displayed.</p>
+		<p>Email Response Password - This is the code used to encrypt the email responses to ensure that the responses are protected when parents click them and help to stop malisous parents from altering other records. You do not need to remember this and can even leave it at the random value shown here;<br />
+		<input name="ResponseCodeKey" value="<?php $ResponseCodeKey; ?>" maxlength="50" /></p>
 		<h2>Database Config</h2>
-		<p>SQL / SQLite</p>
+		<p> SQLite</p>
+		Offer to install and configure phpliteadmin - https://code.google.com/p/phpliteadmin/
 		<h2>OSM Config</h2>
+		<?php
+			if(isset($OSM_Secret))
+			{
+				echo "<p>You have already connected to OSM, you do not need to reenter these details unless you want to change the user or you are having problems connecting</p>";
+			}
+			else
+			{
+				echo "<p>Please provide your OSM login details, you should only ever need to provide this information once and it is not saved.  Once you click install this is sent to OSM and an authorisation code is generated that is used for all future connections.</p>";
+			}
+		?>
 		<table>
 			<tr>
 				<td>Email Address</td>
