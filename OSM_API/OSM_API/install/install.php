@@ -35,10 +35,8 @@ if($_POST['Install'] == "TRUE")
 	/*
 	 * These relate to the DB structure
 	 */
-	$DB_Method = "'.$DB_Method.'"; // SQL / SQLite
-	$DB_Username = "'.$DB_Username.'";
-	$DB_Password = "'.$DB_Password.'";
-	$DB_Location = "'.$DB_Location.'"; // The path to the DB, normally localhost
+	$DB_Password = "'.$DB_Password.'"; // Password to access the DB
+	$DB_Location = "'.$DB_Location.'"; // The path to the DB
 	$DB_Database = "'.$DB_Database.'"; // The database name
 	
 	/*
