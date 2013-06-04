@@ -586,7 +586,7 @@ function UpdateNextCron()
 					break;
 				case CronFrequency::EndHalfTerm:
 					break;
-				case default:
+				default :
 					Logger("Cron Frequency $Frequency does not exist", LogTypes::Error);
 					break;
 			}

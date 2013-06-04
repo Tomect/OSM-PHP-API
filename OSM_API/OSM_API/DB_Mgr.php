@@ -170,4 +170,9 @@ function DB_UpdateNextCron($Frequency, $Date)
 {
 	
 }
+
+function DB_Install()
+{
+	$SQL = "CREATE TABLE 'tblCron' ('cronJob' TEXT PRIMARY KEY NOT NULL, 'cronFrequency' INTEGER default 0 , 'cronLastRun' INTEGER)";
+}
 ?>

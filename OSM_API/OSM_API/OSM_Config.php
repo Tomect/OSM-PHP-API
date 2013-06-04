@@ -5,9 +5,9 @@
  */
 $DB_Method = "SQL"; // SQL / SQLite
 $DB_Username = "";
-$DB_Password = "";
+$DB_Password = "Pword";
 $DB_Location = "localhost"; // The path to the DB, normally localhost
-$DB_Database = ""; // The database name
+$DB_Database = "TestLoc"; // The database name
 
 /*
  * This is your OSM Username

@@ -5,10 +5,13 @@ if($_POST['Install'] == "TRUE")
 {
 	$OSM = new OSM();
 	
-	$json = $OSM->Authorise_OSM($_POST['OSM_Email'], $_POST['OSM_Password']);
-	
-	$OSM_Secret = $json->secret;
-	$OSM_Userid = $json->userid;
+	if(!empty($_POST['OSM_Email']) && !empty($_POST['OSM_Password']))
+	{
+		$json = $OSM->Authorise_OSM($_POST['OSM_Email'], $_POST['OSM_Password']);
+		
+		$OSM_Secret = $json->secret;
+		$OSM_Userid = $json->userid;
+	}
 	
 	$configFile = '		
 	<?php
@@ -79,7 +82,8 @@ if($_POST['Install'] == "TRUE")
 		<input name="ResponseCodeKey" value="<?php $ResponseCodeKey; ?>" maxlength="50" /></p>
 		<h2>Database Config</h2>
 		<p> SQLite</p>
-		Offer to install and configure phpliteadmin - https://code.google.com/p/phpliteadmin/
+		<input name="DB_Database" value="<?php $DB_Database; ?>" maxlength="50" />
+		<input name="DB_Password" value="<?php $DB_Password; ?>" maxlength="50" />
 		<h2>OSM Config</h2>
 		<?php
 			if(isset($OSM_Secret))
