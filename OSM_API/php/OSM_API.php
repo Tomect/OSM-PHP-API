@@ -202,6 +202,21 @@ class OSM
 	{
 		
 	}
+	
+	public function UpdateEventRecord($ScoutID, $EventID, $SectionID, $Column, $Value)
+	{
+		/*
+		
+		events.php?action=updateScout
+		
+		scoutid:4077
+		column:attending
+		value:No
+		sectionid:487
+		row:11
+		eventid:31961
+		*/
+	}
 
 	
 	// Program Functions
