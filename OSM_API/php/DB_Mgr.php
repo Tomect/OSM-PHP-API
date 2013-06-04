@@ -159,4 +159,15 @@ function DB_GetTermByID($TermID)
 	
 }
 
+
+// Cron Functions
+function DB_GetCronTimes()
+{
+	// SELECT * FROM tblCronTime;
+}
+
+function DB_UpdateNextCron($Frequency, $Date)
+{
+	
+}
 ?>
