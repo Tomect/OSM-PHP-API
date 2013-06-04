@@ -12,6 +12,26 @@ function GetParentPage()
 
 	Logger("Parent Area - Open page ," . $Page, LogTypes::Debug);
 
+
+	switch ($Page)
+	{
+		case "EmailResponse" :
+			$Data = $_GET['Data'];
+			if($Response = CheckEmailResponseCode($Data) != false)
+			{
+				$OSM = new OSM();
+				$OSM->UpdateEventRecord($Response[0], 
+										$Response[1], 
+										$SectionID, 
+										"attending", 
+										$Response[2]);
+										
+				
+			}
+			
+			break;
+	}
+
 	return $HTML;
 }
 
@@ -92,6 +112,33 @@ function DisplayScoutOverview($ScoutID)
 	
 }
 
+function CheckEmailResponseCode($EmailResponseCode)
+{
+	
+	$plaintext = mcrypt_decrypt(MCRYPT_BLOWFISH, $ResponseCodeKey, $EmailResponseCode, MCRYPT_MODE_CFB);
+	
+	try
+	{
+		list($ScoutID, $EventID, $Response) = explode(":", $data);
+		
+		if(is_int($ScoutID) && is_int($EventID) && ($Response == "yes" || $Response == "no"))
+		{
+			return array($ScoutID, $EventID, $Response);
+		}
+	}
+	reurn false;
+	
+}
+
+function GenerateEmailResponseCode($ScoutID,  $EventID, $Response)
+{
+	// Create the verification code for the email
+	global $ResponseCodeKey;
+	$ResponseCode = mcrypt_encrypt(MCRYPT_BLOWFISH, $ResponseCodeKey, $ScoutID . ":" . $EventID . ":" . $Response, MCRYPT_MODE_CFB);
+
+	// Return the Code
+	return $ResponseCode;
+}
 // Login Functions
 function LoginForm()
 {
