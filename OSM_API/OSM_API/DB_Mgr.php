@@ -1,9 +1,8 @@
 <?php 
 
-function DB_Connect()
-{
-	null;
-}
+//Connect to the DB
+// need to ensure that if DB not installed, no error but should have neem called from the install page
+
 
 // Parent Functions
 function DB_GetParentScouts($ParentID)
@@ -173,6 +172,22 @@ function DB_UpdateNextCron($Frequency, $Date)
 
 function DB_Install()
 {
+	
+	// Cron Table
 	$SQL = "CREATE TABLE 'tblCron' ('cronJob' TEXT PRIMARY KEY NOT NULL, 'cronFrequency' INTEGER default 0 , 'cronLastRun' INTEGER)";
+
+	// Global Cache Table
+	$SQL = "CREATE TABLE 'tblGlobalCache' ('cacheItem' TEXT PRIMARY KEY NOT NULL, 'cacheData' BLOB NOT NULL, 'cacheDate' INTEGER NOT NULL, 'cacheExpiry' INTEGER)";
+
+	// Scout
+	$SQL = "CREATE TABLE 'tblScout' ('scoutID' INTEGER PRIMARY KEY NOT NULL, 'scoutFirstName' INTEGER NOT NULL, 'scoutSurname' INTEGER NOT NULL)";
+	
+	
+	// Email System
+	$SQL = "CREATE TABLE 'tblEmail' ('emailID' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'emailSubject' TEXT, 'emailText' TEXT, 'emailDate' INTEGER);";
+	$SQL = "CREATE TABLE 'tblEmailParentLink' ('emailID' INTEGER NOT NULL, 'parentID' INTEGER NOT NULL, PRIMARY KEY ('emailID', 'parentID'))";
+	
+	
+	
 }
 ?>
