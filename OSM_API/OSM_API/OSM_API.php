@@ -413,6 +413,15 @@ class OSMCacheType
 			Logger("Get Items from the Cache", LogTypes::Debug);
 			$this->Items = $_SESSION[$this->Cache_Prefix . 'Items'];
 		}
+		
+		// If no items then it is likly that this is the first time that the site has been opened 
+		// for the current session
+		if(count($this->Items) == 0)
+		{
+			// Load the Global Cache
+			$this->Items= DB_GetGlobalCacheList();
+			$_SESSION[$this->Cache_Prefix . 'Items'] = $this->Items;
+		}
 	}
 	
 	public function set($name, $value)
@@ -434,13 +443,39 @@ class OSMCacheType
 		$_SESSION[$this->Cache_Prefix . $name] = $value;
 	}
 	
+	public function setGlobal($name, $value)
+	{
+		// If this is a new variable stored to the cache add it
+		if($this->Items == null || array_search("Global" . $name, $this->Items) === FALSE)
+		{
+			Logger("Added $name to Global OSM Cache Items", LogTypes::Debug);
+			array_push($this->Items, "Global" . $name);
+			
+			// ensure that there are no duplicate values in the array
+			$this->Items = array_unique($this->Items);
+			
+			// Update the session cache
+			$_SESSION[$this->Cache_Prefix . 'Items'] = $this->Items;
+		}
+		
+		DB_SaveGlobalCache($name, $value);
+	}
+	
 	public function get($name)
 	{
 		// Ensure the item exists
 		if($this->exists($name))
 		{
 			Logger("Get $name from OSM Cache", LogTypes::Debug);
-			return 	$_SESSION[$this->Cache_Prefix . $name];
+			
+			if (substr($name, strlen($this->Cache_Prefix), strlen($this->Cache_Prefix) + strlen("Global")))
+			{
+				return DB_GetGlobalCache($name);
+			}
+			else
+			{
+				return 	$_SESSION[$this->Cache_Prefix . $name];
+			}
 		}
 		else
 		{
@@ -466,8 +501,15 @@ class OSMCacheType
 	{
 		Logger("Remove $name from OSM Cache", LogTypes::Debug);
 		
-		// remove the item from the session
-		unset($_SESSION[$this->Cache_Prefix.'$name']);
+		// If the item is a global item, remove it from the DB
+		if (substr($name, 0, strlen("Global")))
+		{
+			return DB_DeleteGlobalCache($name);
+		}
+		else
+		{
+			unset($_SESSION[$this->Cache_Prefix.'$name']);
+		}
 		
 		// remove the item from the list of cached items
 		$item = array_search($name, $Items);
@@ -484,10 +526,10 @@ class OSMCacheType
 	{
 		// Logged as Info as this is only a advanced function
 		Logger("Clear the OSM cache", LogTypes::Info);
-		
+			
 		foreach($Items as $name)
 		{
-			delete($name);
+			$this->delete($name);
 		}
 	}
 	
@@ -501,7 +543,7 @@ class OSMCacheType
 		foreach($this->Items as $name)
 		{
 			echo "<h2>$name</h2>";
-			var_dump($_SESSION[$this->Cache_Prefix . $name]);
+			var_dump($this->get($name));
 		}
 		
 		$HTML = ob_get_contents();
