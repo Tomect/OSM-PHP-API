@@ -170,6 +170,53 @@ function DB_UpdateNextCron($Frequency, $Date)
 	
 }
 
+
+function DB_SaveGlobalCache($name, $value)
+{
+	// Check if exists in DB
+	if(DB_GlobalCacheExists($name))
+	{
+		//UPDATE
+	}
+	else
+	{
+		//INSERT
+	}
+	 
+}
+
+function DB_GetGlobalCache($name)
+{
+	if(DB_GlobalCacheExists($name))
+	{
+		return NULL; // SELECT FROM ...
+	}
+	else
+	{
+		// Log an error
+		return -1;
+	}
+}
+
+function DB_GlobalCacheExists($name)
+{
+	return false;
+}
+
+function DB_DeleteGlobalCache($name)
+{
+	if(DB_GlobalCacheExists($name))
+	{
+		// DELECT FROM
+	}
+}
+
+function DB_GetGlobalCacheList()
+{
+	return array();
+}
+
+// Install and Update Functions
 function DB_Install()
 {
 	
