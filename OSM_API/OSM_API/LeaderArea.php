@@ -116,5 +116,61 @@ function PrintRegister($SectionID, $TermID)
 	
 }
 
+function SectionConfigForm()
+{
+	// Section Selection
+	$HTML .= "<form method=\"post\"><select name=\"sectionID\" onchange='this.form.submit()'>";
+		$HTML .= '<option value="-1">Select Section</option>';
+		$Sections = DB_GetSections();
+		foreach($Sections as $Section)
+		{
+			$HTML .= '<option value="{$Section->GetSectionID()}"';
+			
+			if($_POST['sectionID'] == $Section->GetSectionID())
+			{
+				$HTML .= ' selected';
+			}
+			
+			$HTML .= '>{$Section->GetName()}</option>'
+		}
+	$HTML .= "</select>";
+	$HTML .= '<noscript><input type="submit" value="Select Section"> /</noscript></form>';
+	
+	// Section Details
+	if(isset($_POST['sectionID']) && $_POST['sectionID'] != -1)
+	{
+		$Section = DB_GetSection($_POST['sectionID']);
+		
+		$HTML .= "<form method=\"post\">";
+		$HTML .= '<table>';
+		
+		$HTML .= '<tr><td>Section Name</td>';
+		$HTML .= '<td><input type="text" maxlength="50" required value="{$Section->GetName()}" /></td></tr>';
+		
+		$HTML .= '<tr><td colspan="2"><h3>Section Finances</h3><p>Enter the subs amounts for the various intervals, if you enter 0 then that payment option will not show.</td></tr>';
+		$HTML .= '<tr><td>Weekly Subs</td>';
+		$HTML .= '<td><input name="Weekly" type="number" step="0.01" value="{$Section->GetWeeklySubs()}" /></td></tr>';
+		$HTML .= '<tr><td>Half Term Subs</td>';
+		$HTML .= '<td><input name="HalfTerm" type="number" step="0.01" value="{$Section->GetWeeklySubs()}" /></td></tr>';
+		$HTML .= '<tr><td>Full Term Subs</td>';
+		$HTML .= '<td><input name="Term" type="number" step="0.01" value="{$Section->GetWeeklySubs()}" /></td></tr>';
+		
+		$HTML .= '</table>';
+		$HTML .= '<input type="checkbox" name="UpdateOSM" checked /> Update OSM';
+		$HTML .= '<input type="submit" value="Submit Data" />';
+		
+		$HTML .= "</form>";
+	}
+	
+	return $HTML;
+}
+
+function processSectionConfigForm()
+{
+	if(!CheckAdmin())
+		return;
+		
+	
+}
 
 ?>
