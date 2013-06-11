@@ -42,6 +42,10 @@ function DB_RemoveScout($ScoutID)
 	
 }
 
+function DB_GetScoutsInSection($SectionID)
+{
+	return array();
+}
 
 // Event Functions
 function DB_AddEvent(EventType $Event)
