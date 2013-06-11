@@ -112,7 +112,33 @@ function GetBadgeStocks($Section)
  */
 function GetDueSubs($Section, $Amount)
 {
+	$Scouts = DB_GetScoutsInSection($Section);
 	
+	// Loop all the Scouts
+	foreach($Scouts as $ScoutID)
+	{
+		// Get the scouts details
+		$Scout = $OSM->GetScout($ScoutID)
+		
+		// Check the Subs amount
+		if($Scout->GetSubs() < $Amount)
+		{
+			$HTML .= "<li>";
+			$HTML .= $Scout->FullName " owes £";
+			$HTML .= ($Amount - $Scout->GetSubs());
+			$HTML .= "</li>";
+		}
+	}
+	
+	if(isset($HTML))
+	{
+		return "<ul>" . $HTML . "</ul>";
+	}
+	else
+	{
+		return $OSM_NoDueSubs;
+	}
+
 }
 
 /*
