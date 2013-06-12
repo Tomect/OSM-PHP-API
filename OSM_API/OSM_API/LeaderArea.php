@@ -173,4 +173,33 @@ function processSectionConfigForm()
 	
 }
 
+function GetOrphanScouts()
+{
+	if(!CheckAdmin())
+		return;
+		
+	$HTML .= "<h2>Orphan Scouts</h2>";
+	
+	$Scouts = DB_GetOrphanScoutIDs();
+	if(count($Scouts) == 0)
+	{
+		$HTML .= "<p>All Scouts are linked to parents.</p>";
+	}
+	else
+	{
+		$HTML .= "<p>There are currently " . count($Scouts) . " Scouts that are not linked to parent accounts.</p>"
+		$HTML .= "<ul>";
+		foreach($Scouts as $ScoutID)
+		{
+			$Scout = new Scout;
+			$Scout->GetScout($ScoutID)
+			$HTML .= "<li>";
+			$HTML .= $Scout->GetFullName()
+			$HTML .= "</li>";
+		}
+		$HTML .= "</ul>";
+	}
+	return $HTML;
+}
+
 ?>
