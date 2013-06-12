@@ -220,6 +220,14 @@ function DB_GetGlobalCacheList()
 	return array();
 }
 
+// MISC
+function DB_GetOrphanScoutIDs()
+{
+	//  SELECT `ScoutID` FROM "tblScout" WHERE `ScoutID` NOT IN (SELECT `ScoutID` FROM `tblParentScoutLink`)
+	return array();
+}
+
+
 // Install and Update Functions
 function DB_Install()
 {
