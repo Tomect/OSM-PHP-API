@@ -67,6 +67,14 @@ if($_POST['Install'] == "TRUE")
 </head>
 <body>
 	<h1>OSM PHP API - Installation</h1>
+	<?php
+	// Check for  a DB error 
+	if(isset($_GET['DB_Error']))
+	{
+		echo "<p>You have been brought to this page because there has been an error connecting to the database.  This error will cause all of the OSM API to stop working and must be fixed.  The Database returned the following information <ul><li>".$_GET['DB_Error']."</li></ul>If this information does not help you to diagnose the issue, try running the install page again, if this does not fix the issue, request some support.</p>"
+	}
+	
+	?>
 	<form name="OSM_Install" method="post" target="#">
 		<h2>Server Config</h2>
 		<p>This section shows the server configuration that must be completed.  If there are any red crosses, the system will not install.</p>
