@@ -16,6 +16,8 @@ class ScoutType
 	private $Notes = "";
 	private $Parents = "";
 	
+	private $SectionID = "";
+	
 	private $PatrolID = "";
 	private $Patrol = "";
 	private $PatrolLeader = "";
@@ -72,6 +74,8 @@ yrs: 0
 		$this->Medical = $ScoutDetails->medical;
 		$this->Notes = $ScoutDetails->notes;
 		$this->Parents = $ScoutDetails->parents;
+		
+		$this->SectionID = $ScoutDetails->sectionidO;
 		
 		$this->PatrolID= $ScoutDetails->patrolid;
 		$this->Patrol= $ScoutDetails->patrol;
@@ -157,6 +161,11 @@ yrs: 0
 		
 		// Call the update of the Scout on OSM
 		return $OSM->UpdateScout($this);
+	}
+	
+	public function GetSectionID()
+	{
+		return $this->SectionID;
 	}
 }
 
