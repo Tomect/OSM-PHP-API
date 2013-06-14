@@ -2,11 +2,14 @@
 
 //Connect to the DB
 // need to ensure that if DB not installed, no error but should have neem called from the install page
-$DB_conn = sqlite_open($DB_Location, 0666, $error);
-if (!$DB_conn)
+try
 {
-	// TODO log error connecting to DB
-	header( "Location: $OSM_API_Location/install/install.php?DB_Error=$error" ) ;
+	$DB = new SQLite3($DB_Location);
+}
+catch
+{
+// TODO log error connecting to DB
+	header( "Location: $OSM_API_Location/install/install.php?DB_Error=$error" ) ;	
 }
 
 // Parent Functions
@@ -234,7 +237,7 @@ function DB_GetOrphanScoutIDs()
 	$sql = 'SELECT `ScoutID` FROM `tblScout` WHERE `ScoutID` NOT IN (SELECT `ScoutID` FROM `tblParentScoutLink`)';
 	
 	// Run the query on the DB
-	$result = sqlite_query($DB_conn, $sql);
+	$result = $DB->query($sql);
 	if(!$result)
 	{
 		//TODO Log error running query
@@ -243,7 +246,7 @@ function DB_GetOrphanScoutIDs()
 	}
 	
 	// Loop all the orphaned scouts
-	while($row = sqlite_fetch_array($result, SQLITE_NUM))
+	while($row = $result->fetchArray())
 	{
 		// Add the orphaned Scout ID to the return array
 		array_push($ScoutIDs,$row['ScoutID']);
