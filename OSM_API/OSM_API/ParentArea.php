@@ -55,15 +55,19 @@ function GetDashboard()
 	// check 1 scout link to account
 	if(count($Scouts == 0))
 	{
-		$HTML .= "You have no Scouts linked to your account.  Please talk to your leader to have oyur child linked to your account.";
+		$HTML .= $OSM_NoScoutsLinkedToParent;
 	}
 	else
 	{
-	// loop all scouts
-		for(;1 == 1;)
+		// loop all scouts
+		$ScoutIDs = DB_GetParentScouts($_POST['ParentID']);
+		for($ScoutIDs as $ScoutID)
 		{
-			// 
-			$HTML .= DisplayScoutOverview($ScoutID);
+			$HTML .= DisplayScoutOverview($ScoutID, &$AmountDue, &$UrgantAmount);
+		}
+		if($AmountDue > 0)
+		{
+			$HTML = "<p>Total Amount Owed to the group $AmountDue <br/> Minimum amount to pay £$UrgantAmount</p>" . $HTML;
 		}
 	}
 	
@@ -107,9 +111,53 @@ function GetEventDetails($EventID)
 	
 }
 
-function DisplayScoutOverview($ScoutID)
+function DisplayScoutOverview($ScoutID, &$AmountDue, &$UrgantAmount)
 {
+	$OSM 		= new OSM;
+	$Scout 		= OSM->GetScout($ScoutID);
+	$Section 	= DB_GetSection($Scout->GetSectionID());
 	
+	$HTML .= "<h2>" . $Scout->GetFullName() . " - " . $Scout->GetAge() . "</h2>";
+	
+	// If enabled for the section show the moving on date
+	if($Section['sectionMovingDate'])
+	{
+		$HTML .= "<p>";
+		$HTML .= $Scout->GetFirstName();
+		if($Scout->MovingDateEstimated())
+		{
+			$HTML .= $OSM_ScoutMovingDateEstimated;
+		}
+		else
+		{
+			$HTML .= $OSM_ScoutMovingDate;
+		}
+		$HTML .= $Scout->GetMovingSection() . " on " .$Scout->GetMovingDate();
+		$HTML .= "</p>";
+	}
+	
+	// If Section Subs is enabled 
+	if($Section['sectionSubs'])
+	{
+		$HTML .= "<p>";
+		if($Scouts->GetDueSubs() > 0)
+		{
+			$HTML .= $Scout->GetFirstName() . $OSM_SubsPaid;
+		}
+		else
+		{
+			$HTML .= "£" . $Scouts->GetDueSubs() . $OSM_SubsDue . $Scout->GetFirstName();
+			$UrgantAmount += $Scouts->GetDueSubs();
+		}
+		$HTML .= "</p>";
+	}
+	
+	if($Section['sectionScoutDetails'])
+	{
+		$HTML .= "<p>To view the details that are stored for " .$Scout->GetFirstName() . ' <a href"?ParentPage=ViewScoutDetails&ampScoutID='.$Scout->GetScoutID().'">Click Here</a></p>';
+	}
+	
+	$AmountDue += $UrgantAmount;
 }
 
 function CheckEmailResponseCode($EmailResponseCode)
