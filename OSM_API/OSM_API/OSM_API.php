@@ -40,20 +40,19 @@ class OSM
 	 */
 	public function GetCurrentTermID($SectionID)
 	{
-		if(isset($_SESSION[$OSM_Cache_Prefix .'CurrentTerm' . $SectionID]))
+		if($OSMCache->exists('CurrentTerm' . $SectionID))
 		{
-			return $_SESSION[$OSM_Cache_Prefix .'CurrentTerm' . $SectionID];
+			return $OSMCache->get('CurrentTerm' . $SectionID);
 		}
 		else
 		{
-			if(isset($_SESSION['Terms']))
+			if($OSMCache->exists('Terms' . $SectionID))
 			{
-				$sectionsTerms = $_SESSION['Terms'];
+				$sectionsTerms = $OSMCache->get('Terms');
 			}
 			else
 			{
-				$sectionsTerms = $this->OSM_perform_query('api.php?action=getTerms', array());
-				$_SESSION['Terms'] = $sectionsTerms;
+				$sectionsTerms = GetTerms_NoCache();
 			}
 			   
 			
@@ -89,41 +88,78 @@ class OSM
 	
 	public function GetTerm($TermID)
 	{
-		
+		// loop all Terms in the term cache
 	}
 	
 	public function GetTerm_NoCache($TermID)
 	{
+		// Update the Cahce
+		GetTerms_NoCache();
 		
+		return GetTerm($TermID);
+	}
+	
+	public function GetTerms_NoCache()
+	{
+		$sectionsTerms = $this->OSM_perform_query('api.php?action=getTerms', array());
+		
+		//TODO check that the result is valid
+		$OSMCache->setGlobal('Terms', 'api.php?action=getTerms', $sectionsTerms, 7);
+		
+		return $sectionsTerms;
 	}
 	
 	public function AddTerm(TermType $Term)
-	{/*
-		https://www.onlinescoutmanager.co.uk/users.php?action=addTerm&sectionid=11496
-		term:2014
-start:2013-07-01
-end:2014-07-01
-termid:0
-
-{"terms":{"486":[{"termid":"795","sectionid":"486","name":"Summer Term 2011","startdate":"2011-06-07","enddate":"2011-09-06","past":true},{"termid":"796","sectionid":"486","name":"Autumn Term 2011 (1st Half)","startdate":"2011-09-06","enddate":"2011-10-18","past":true},{"termid":"797","sectionid":"486","name":"Autumn Term 2011 (2nd Half)","startdate":"2011-10-31","enddate":"2011-12-20","past":true},{"termid":"2739","sectionid":"486","name":"Spring Term 2012 (1st half)","startdate":"2012-01-01","enddate":"2012-02-25","past":true},{"termid":"5718","sectionid":"486","name":"Spring Term 2012 (2nd half)","startdate":"2012-02-26","enddate":"2012-03-30","past":true},{"termid":"8018","sectionid":"486","name":"Summer Term 2012","startdate":"2012-04-17","enddate":"2012-07-23","past":true},{"termid":"8369","sectionid":"486","name":"Winter Term 2012","startdate":"2012-09-03","enddate":"2012-12-31","past":true},{"termid":"22422","sectionid":"486","name":"Spring 2013","startdate":"2013-01-01","enddate":"2013-04-07","past":true},{"termid":"32130","sectionid":"486","name":"Summer Term 2013","startdate":"2013-04-08","enddate":"2013-07-21","past":true}],"489":[{"termid":"799","sectionid":"489","name":"Autumn 2011","startdate":"2011-09-01","enddate":"2011-12-21","past":true},{"termid":"16160","sectionid":"489","name":"Winter 2012","startdate":"2012-09-01","enddate":"2012-12-31","past":true}],"487":[{"termid":"798","sectionid":"487","name":"Autumn Term 2011","startdate":"2011-09-01","enddate":"2011-12-21","past":true},{"termid":"1724","sectionid":"487","name":"Spring Term 2012","startdate":"2012-01-01","enddate":"2012-04-15","past":true},{"termid":"1725","sectionid":"487","name":"Summer Term 2012","startdate":"2012-04-16","enddate":"2012-07-20","past":true},{"termid":"7155","sectionid":"487","name":"Summer Hols 2012","startdate":"2012-07-20","enddate":"2012-09-03","past":true},{"termid":"8368","sectionid":"487","name":"Autumn Term 2012","startdate":"2012-09-03","enddate":"2012-12-31","past":true},{"termid":"11651","sectionid":"487","name":"Spring Term 2012","startdate":"2013-01-01","enddate":"2012-03-22","past":true},{"termid":"16530","sectionid":"487","name":"Spring Term 2013","startdate":"2013-01-01","enddate":"2013-03-22","past":true},{"termid":"11652","sectionid":"487","name":"Easter Hols 2013","startdate":"2013-03-22","enddate":"2013-04-08","past":true},{"termid":"11653","sectionid":"487","name":"Summer Term 2013","startdate":"2013-04-08","enddate":"2013-07-19","past":true},{"termid":"11654","sectionid":"487","name":"Summer Hols 2013","startdate":"2013-07-20","enddate":"2013-09-02","past":false}],"581":[{"termid":"1178","sectionid":"581","name":"2011","startdate":"2011-09-08","enddate":"2011-12-31","past":true},{"termid":"22428","sectionid":"581","name":"2012","startdate":"2012-01-01","enddate":"2012-12-31","past":true},{"termid":"22429","sectionid":"581","name":"2013","startdate":"2013-01-01","enddate":"2013-12-31","past":true}],"488":[{"termid":"827","sectionid":"488","name":"Spring 2012","startdate":"2012-02-28","enddate":"2012-04-29","past":true},{"termid":"828","sectionid":"488","name":"Summer 2012","startdate":"2012-05-01","enddate":"2012-07-20","past":true},{"termid":"829","sectionid":"488","name":"Summer break activities 2012","startdate":"2012-07-21","enddate":"2012-09-03","past":true},{"termid":"826","sectionid":"488","name":"Autum 2012","startdate":"2012-08-01","enddate":"2012-12-31","past":true},{"termid":"18076","sectionid":"488","name":"Winter 2012","startdate":"2013-01-01","enddate":"2013-02-27","past":true},{"termid":"815","sectionid":"488","name":"Spring 2013","startdate":"2013-02-21","enddate":"2013-04-09","past":true},{"termid":"16474","sectionid":"488","name":"Summer 2013","startdate":"2013-04-09","enddate":"2013-07-18","past":true}],"4632":[{"termid":"6866","sectionid":"4632","name":"Summer 2012","startdate":"2012-03-15","enddate":"2012-07-20","past":true},{"termid":"8370","sectionid":"4632","name":"Winter 2012","startdate":"2012-09-03","enddate":"2012-12-31","past":true}],"11496":[{"termid":"22275","sectionid":"11496","name":"2013","startdate":"2012-12-16","enddate":"2013-06-01","past":true},{"termid":"38801","sectionid":"11496","name":"2014","startdate":"2013-07-01","enddate":"2014-06-30","past":false}]}}
-	*/}
+	{
+		if ($Term->ValidateTerm())
+		{
+			$parts = array();
+			$parts['term'] = $Term->GetName();
+			$parts['start'] = $Term->GetStartDate();
+			$parts['end'] = $Term->GetEndDate();
+			$parts['termid'] = 0;
+			$query = 'users.php?action=addTerm&sectionid=' . $Term->GetSectionID();
+			$sectionsTerms = $this->OSM_perform_query($query, $parts);
+			
+			//TODO check valid return
+			
+			GetTerms_NoCache();
+			DB_AddTerm($Term);
+		}
+	}
 	
 	public function DeleteTerm($TermID)
-	{/*
-		https://www.onlinescoutmanager.co.uk/users.php?action=deleteTerm&sectionid=11496
-		termid:38805*/
+	{
+		$Term = DB_GetTermByID($TermID);
+		
+		$query = 'users.php?action=deleteTerm&sectionid=' . $Term->GetSectionID();
+		$parts = array();
+		$parts['termid'] = $TermID;
+		$this->OSM_perform_query($query, $parts);
+
+		//TODO check the output
+		GetTerms_NoCache();
+		DB_RemoveTerm($TermID)
 	}
 	
 	public function UpdateTerm(TermType $Term)
-	{/*
-		https://www.onlinescoutmanager.co.uk/users.php?action=addTerm&sectionid=11496
-		term:2016
-start:2013-07-02
-end:2014-06-30
-termid:38801
-
-{"terms":{"486":[{"termid":"795","sectionid":"486","name":"Summer Term 2011","startdate":"2011-06-07","enddate":"2011-09-06","past":true},{"termid":"796","sectionid":"486","name":"Autumn Term 2011 (1st Half)","startdate":"2011-09-06","enddate":"2011-10-18","past":true},{"termid":"797","sectionid":"486","name":"Autumn Term 2011 (2nd Half)","startdate":"2011-10-31","enddate":"2011-12-20","past":true},{"termid":"2739","sectionid":"486","name":"Spring Term 2012 (1st half)","startdate":"2012-01-01","enddate":"2012-02-25","past":true},{"termid":"5718","sectionid":"486","name":"Spring Term 2012 (2nd half)","startdate":"2012-02-26","enddate":"2012-03-30","past":true},{"termid":"8018","sectionid":"486","name":"Summer Term 2012","startdate":"2012-04-17","enddate":"2012-07-23","past":true},{"termid":"8369","sectionid":"486","name":"Winter Term 2012","startdate":"2012-09-03","enddate":"2012-12-31","past":true},{"termid":"22422","sectionid":"486","name":"Spring 2013","startdate":"2013-01-01","enddate":"2013-04-07","past":true},{"termid":"32130","sectionid":"486","name":"Summer Term 2013","startdate":"2013-04-08","enddate":"2013-07-21","past":true}],"489":[{"termid":"799","sectionid":"489","name":"Autumn 2011","startdate":"2011-09-01","enddate":"2011-12-21","past":true},{"termid":"16160","sectionid":"489","name":"Winter 2012","startdate":"2012-09-01","enddate":"2012-12-31","past":true}],"487":[{"termid":"798","sectionid":"487","name":"Autumn Term 2011","startdate":"2011-09-01","enddate":"2011-12-21","past":true},{"termid":"1724","sectionid":"487","name":"Spring Term 2012","startdate":"2012-01-01","enddate":"2012-04-15","past":true},{"termid":"1725","sectionid":"487","name":"Summer Term 2012","startdate":"2012-04-16","enddate":"2012-07-20","past":true},{"termid":"7155","sectionid":"487","name":"Summer Hols 2012","startdate":"2012-07-20","enddate":"2012-09-03","past":true},{"termid":"8368","sectionid":"487","name":"Autumn Term 2012","startdate":"2012-09-03","enddate":"2012-12-31","past":true},{"termid":"11651","sectionid":"487","name":"Spring Term 2012","startdate":"2013-01-01","enddate":"2012-03-22","past":true},{"termid":"16530","sectionid":"487","name":"Spring Term 2013","startdate":"2013-01-01","enddate":"2013-03-22","past":true},{"termid":"11652","sectionid":"487","name":"Easter Hols 2013","startdate":"2013-03-22","enddate":"2013-04-08","past":true},{"termid":"11653","sectionid":"487","name":"Summer Term 2013","startdate":"2013-04-08","enddate":"2013-07-19","past":true},{"termid":"11654","sectionid":"487","name":"Summer Hols 2013","startdate":"2013-07-20","enddate":"2013-09-02","past":false}],"581":[{"termid":"1178","sectionid":"581","name":"2011","startdate":"2011-09-08","enddate":"2011-12-31","past":true},{"termid":"22428","sectionid":"581","name":"2012","startdate":"2012-01-01","enddate":"2012-12-31","past":true},{"termid":"22429","sectionid":"581","name":"2013","startdate":"2013-01-01","enddate":"2013-12-31","past":true}],"488":[{"termid":"827","sectionid":"488","name":"Spring 2012","startdate":"2012-02-28","enddate":"2012-04-29","past":true},{"termid":"828","sectionid":"488","name":"Summer 2012","startdate":"2012-05-01","enddate":"2012-07-20","past":true},{"termid":"829","sectionid":"488","name":"Summer break activities 2012","startdate":"2012-07-21","enddate":"2012-09-03","past":true},{"termid":"826","sectionid":"488","name":"Autum 2012","startdate":"2012-08-01","enddate":"2012-12-31","past":true},{"termid":"18076","sectionid":"488","name":"Winter 2012","startdate":"2013-01-01","enddate":"2013-02-27","past":true},{"termid":"815","sectionid":"488","name":"Spring 2013","startdate":"2013-02-21","enddate":"2013-04-09","past":true},{"termid":"16474","sectionid":"488","name":"Summer 2013","startdate":"2013-04-09","enddate":"2013-07-18","past":true}],"4632":[{"termid":"6866","sectionid":"4632","name":"Summer 2012","startdate":"2012-03-15","enddate":"2012-07-20","past":true},{"termid":"8370","sectionid":"4632","name":"Winter 2012","startdate":"2012-09-03","enddate":"2012-12-31","past":true}],"11496":[{"termid":"22275","sectionid":"11496","name":"2013","startdate":"2012-12-16","enddate":"2013-06-01","past":true},{"termid":"38801","sectionid":"11496","name":"2014","startdate":"2013-07-01","enddate":"2014-06-30","past":false}]}}
-	*/}
+	{
+		if ($Term->ValidateTerm())
+		{
+			$parts = array();
+			$parts['term'] = $Term->GetName();
+			$parts['start'] = $Term->GetStartDate();
+			$parts['end'] = $Term->GetEndDate();
+			$parts['termid'] = 0;
+			$query = 'users.php?action=addTerm&sectionid=' . $Term->GetSectionID();
+			$sectionsTerms = $this->OSM_perform_query($query, $parts);
+			
+			//TODO check valid return
+			
+			GetTerms_NoCache();
+			DB_UpdateTerm($Term)
+		}
+	}
 	
 	
 	// Scout Functions
@@ -237,6 +273,9 @@ row:0
 	// Event Functions
 	function AddEvent($Event)
 	{
+		
+		
+		
 		/*
 		https://www.onlinescoutmanager.co.uk/events.php?action=addEvent&sectionid=487
 		
@@ -257,10 +296,17 @@ limitincludesleaders:false
 	
 	public function GetEvent($EventID)
 	{
-		
+		if($OSMCache->exists('Event' . $EventID))
+		{
+			return $OSMCache->get('Event' . $EventID)
+		}
+		else
+		{
+			return GetEvent_NoCache($EventID);
+		}
 	}
 	
-	public function GetEvent_NoCache()
+	public function GetEvent_NoCache($EventID)
 	{
 		/*
 		https://www.onlinescoutmanager.co.uk/events.php?action=getEvent&sectionid=487&eventid=35185
@@ -742,7 +788,7 @@ class OSMCacheType
 		$_SESSION[$this->Cache_Prefix . $name] = $value;
 	}
 	
-	public function setGlobal($name, $value)
+	public function setGlobal($name, $value, $lifespan)
 	{
 		// If this is a new variable stored to the cache add it
 		if($this->Items == null || array_search("Global" . $name, $this->Items) === FALSE)
